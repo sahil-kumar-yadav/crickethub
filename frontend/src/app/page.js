@@ -1,7 +1,9 @@
 import Image from "next/image";
 
-export default function Home() {
+export default function Home({ Component, pageProps }) {
   return (
-    <div>hello</div>
+    <QueryClientProvider client={queryClient}>
+      {/* <Component {...pageProps} /> */}
+    </QueryClientProvider>
   );
 }
