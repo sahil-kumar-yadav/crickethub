@@ -1,5 +1,5 @@
 // backend/models/Player.js
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const PlayerSchema = new mongoose.Schema({
   name: { type: String, required: true },
@@ -13,8 +13,8 @@ const PlayerSchema = new mongoose.Schema({
   bowlingStats: {
     matchesPlayed: { type: Number, default: 0 },
     wicketsTaken: { type: Number, default: 0 },
-    economyRate: { type: Number, default: 0 }
+    economyRate:{type:Number ,default :0}
   }
-}, { timestamps: true });
+}, { timestamps:true });
 
-module.exports = mongoose.model('Player', PlayerSchema);
+export default mongoose.model('Player', PlayerSchema);

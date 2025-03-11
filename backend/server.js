@@ -1,10 +1,13 @@
-// backend/server.js (updated with Socket.io)
-const express = require('express');
-const mongoose = require('mongoose');
-const cors = require('cors');
-const http = require('http');
-const { Server } = require('socket.io');
-require('dotenv').config();
+// backend/server.js (ES Module syntax)
+import express from 'express';
+import mongoose from 'mongoose';
+import cors from 'cors';
+import http from 'http';
+import { Server } from 'socket.io';
+import dotenv from 'dotenv';
+
+// Load environment variables
+dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -15,6 +18,7 @@ app.use(express.json());
 
 // MongoDB connection setup
 const mongoURI = process.env.MONGO_URI || 'mongodb://localhost:27017/cricket_tournament';
+
 mongoose.connect(mongoURI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -36,9 +40,13 @@ io.on('connection', (socket) => {
   });
 });
 
+// Import routes (we'll update this in next step)
+import tournamentRoutes from './routes/tournament.js';
+app.use('/api/tournaments', tournamentRoutes);
+
 // Basic route for testing
 app.get('/', (req, res) => {
-  res.send('Backend with Socket.io is running');
+  res.send('Backend with Socket.io and ES Modules is running');
 });
 
 server.listen(PORT, () => {
