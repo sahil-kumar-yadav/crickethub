@@ -17,6 +17,7 @@ const PORT = process.env.PORT || 5000;
 // Middleware setup
 app.use(cors());
 app.use(express.json());
+app.use('/api/auth', authRoutes);
 
 // MongoDB connection setup
 const mongoURI = process.env.MONGO_URI || 'mongodb://localhost:27017/cricket_tournament';
