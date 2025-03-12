@@ -5,6 +5,8 @@ import cors from 'cors';
 import http from 'http';
 import { Server } from 'socket.io';
 import dotenv from 'dotenv';
+import authRoutes from './routes/auth.js';
+
 
 // Load environment variables
 dotenv.config();
