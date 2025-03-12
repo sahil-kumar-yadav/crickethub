@@ -1,25 +1,18 @@
-// backend/server.js (ES Module syntax)
 import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
 import http from 'http';
 import { Server } from 'socket.io';
 import dotenv from 'dotenv';
-import authRoutes from './routes/auth.js';
 
-
-// Load environment variables
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Middleware setup
 app.use(cors());
 app.use(express.json());
-app.use('/api/auth', authRoutes);
 
-// MongoDB connection setup
 const mongoURI = process.env.MONGO_URI || 'mongodb://localhost:27017/cricket_tournament';
 
 mongoose.connect(mongoURI, {
@@ -29,29 +22,43 @@ mongoose.connect(mongoURI, {
 .then(() => console.log('MongoDB connected'))
 .catch(err => console.error(err));
 
-// HTTP server and Socket.io setup
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: { origin: '*' },
 });
 
+// Pass io instance to routes via app locals
+app.set('io', io);
+
+// Socket.io Connection
 io.on('connection', (socket) => {
-  console.log('A user connected via Socket.io');
+  console.log(`⚡ User connected: ${socket.id}`);
 
   socket.on('disconnect', () => {
-    console.log('A user disconnected');
+    console.log(`❌ User disconnected: ${socket.id}`);
+  });
+
+  // Real-time event example
+  socket.on('liveScoreUpdate', (data) => {
+    io.emit('scoreUpdate', data);
   });
 });
 
-// Import routes (we'll update this in next step)
+// Middleware setup
+app.use(cors());
+app.use(express.json());
+
+// Import Routes
 import tournamentRoutes from './routes/tournament.js';
+import authRoutes from './routes/auth.js';
+// Import Match Routes
+import matchRoutes from './routes/match.js';
+app.use('/api/matches', matchRoutes);
+
 app.use('/api/tournaments', tournamentRoutes);
+app.use('/api/auth', authRoutes);
 
-// Basic route for testing
-app.get('/', (req, res) => {
-  res.send('Backend with Socket.io and ES Modules is running');
-});
-
+// Start Server
 server.listen(PORT, () => {
-  console.log(`Server with Socket.io is running on port ${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });
