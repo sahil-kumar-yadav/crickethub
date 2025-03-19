@@ -34,6 +34,7 @@ const SignInModal = ({ isOpen, onClose }) => {
         }
       } catch (error) {
         console.error(error);
+        console.log("error is",error)
         alert('Error signing up');
       }
     } else {
