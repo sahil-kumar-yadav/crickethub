@@ -1,8 +1,19 @@
 "use client"
 import FileUploader from "@/components/FileUploader";
+import SignInModal from "@/components/SignInModal";
+import { useState } from "react";
 
 export default function Home() {
+  const [isModalOpen, setIsModalOpen] = useState(false);  // State to manage modal visibility
+
+  // Function to open the modal
+  const openModal = () => setIsModalOpen(true);
+
+  // Function to close the modal
+  const closeModal = () => setIsModalOpen(false);
+
   return (
+    
     <div className="container mx-auto p-6">
       <h1 className="text-3xl font-bold mb-6">🏏 Local Cricket Tournament App</h1>
 
@@ -14,7 +25,10 @@ export default function Home() {
 
       <section className="mb-8">
         <h2 className="text-xl font-semibold mb-2">🔐 User Authentication</h2>
-        <p><a href="/login" className="text-blue-600 underline">Login</a> or register to manage tournaments.</p>
+        {/* Button to open the SignInModal */}
+        <button onClick={openModal} className="text-blue-600 underline">
+          Login or Register
+        </button>
       </section>
 
       <section className="mb-8">
@@ -29,6 +43,8 @@ export default function Home() {
         <FileUploader />
       </section>
 
+      {/* SignInModal Component Integration */}
+      <SignInModal isOpen={isModalOpen} onClose={closeModal} />
     </div>
   );
 }
