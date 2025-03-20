@@ -5,8 +5,6 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { signIn } from 'next-auth/react';
 
-// import { useState } from 'react';
-// import { useRouter } from 'next/router';
 
 export default function Page() {
     const [email, setEmail] = useState('');
