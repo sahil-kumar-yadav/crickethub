@@ -1,8 +1,8 @@
 import NextAuth from "next-auth";
-import { MongoDBAdapter } from "@auth/mongodb-adapter";
 import CredentialsProvider from "next-auth/providers/credentials";
-import clientPromise from "@/lib/db";
-import bcrypt from "bcrypt";
+import { MongoDBAdapter } from "@auth/mongodb-adapter";
+import clientPromise from "@/lib/mongodb";
+import axios from "axios";
 
 export const authOptions = {
   adapter: MongoDBAdapter(clientPromise),
@@ -11,18 +11,24 @@ export const authOptions = {
       name: "Credentials",
       credentials: {
         email: { label: "Email", type: "text" },
-        password: { label: "Password", type: "password" }
+        password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        const client = await clientPromise;
-        const usersCollection = client.db().collection("users");
-        const user = await usersCollection.findOne({ email: credentials.email });
-        if (user && bcrypt.compareSync(credentials.password, user.password)) {
-          return { id: user._id, name: user.name, email: user.email };
+        try {
+          const res = await axios.post("http://localhost:5000/api/auth/login", {
+            email: credentials.email,
+            password: credentials.password,
+          });
+
+          if (res.data) {
+            return res.data; // Return user data
+          }
+          return null;
+        } catch (error) {
+          throw new Error(error.response?.data?.message || "Login failed");
         }
-        return null;
-      }
-    })
+      },
+    }),
   ],
   session: {
     strategy: "jwt",
@@ -30,15 +36,16 @@ export const authOptions = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.id = user.id;
+        token.id = user._id;
       }
       return token;
     },
     async session({ session, token }) {
       session.user.id = token.id;
       return session;
-    }
-  }
+    },
+  },
+  secret: process.env.NEXTAUTH_SECRET,
 };
 
 const handler = NextAuth(authOptions);
