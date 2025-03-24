@@ -1,8 +1,8 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { MongoDBAdapter } from "@auth/mongodb-adapter";
-import clientPromise from "@/lib/mongodb";
 import axios from "axios";
+import clientPromise from "@/utils/mongodb";
 
 export const authOptions = {
   adapter: MongoDBAdapter(clientPromise),
