@@ -11,6 +11,10 @@ import authRoutes from './routes/auth.js';
 // Import Match Routes
 import matchRoutes from './routes/match.js';
 
+import playersRoutes from "./routes/players.js";
+import teamsRoutes from "./routes/teams.js";
+
+
 dotenv.config();
 
 const app = express();
@@ -52,6 +56,11 @@ io.on('connection', (socket) => {
 app.use('/api/matches', matchRoutes);
 app.use('/api/tournaments', tournamentRoutes);
 app.use('/api/auth', authRoutes);
+// Add this line below the matches route
+app.use("/api/players", playersRoutes);
+
+// Add this line below the players route
+app.use("/api/teams", teamsRoutes);
 
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

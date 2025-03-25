@@ -31,7 +31,7 @@ export default function AuthModal({ isOpen, onClose }) {
         }
       } else {
         // Signup logic
-        const res = await axios.post("http://localhost:5000/api/auth/register", {
+        const res = await axios.post("https://fuzzy-space-engine-g9r76wxg4rx3v6gx-3000.app.github.dev/api/auth/register", {
           name,
           email,
           password,

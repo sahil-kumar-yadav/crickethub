@@ -18,5 +18,29 @@ router.put('/:id/score', async (req, res) => {
   }
 });
 
+
+// Sample match data
+const matches = [
+  {
+    id: 1,
+    teams: "India vs Australia",
+    date: "2025-03-30",
+    time: "10:00 AM",
+    venue: "Mumbai",
+  },
+  {
+    id: 2,
+    teams: "England vs South Africa",
+    date: "2025-04-02",
+    time: "2:00 PM",
+    venue: "London",
+  },
+];
+
+// Get all matches
+router.get("/", (req, res) => {
+  res.json(matches);
+});
+
 // Export the router as default
 export default router;
