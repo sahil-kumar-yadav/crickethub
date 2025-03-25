@@ -1,11 +1,15 @@
+// filepath: /frontend/middleware.js
 import { withAuth } from "next-auth/middleware";
 
 export default withAuth({
   pages: {
-    signIn: "/login", // Redirect to login page if not authenticated
+    signIn: "/login", // Redirect to login if not authenticated
+  },
+  callbacks: {
+    authorized: ({ token }) => token?.role === "admin", // Only allow admins
   },
 });
 
 export const config = {
-  matcher: ["/dashboard/:path*"], // Protect all routes under /dashboard
+  matcher: ["/admin/:path*"], // Protect all routes under /admin
 };
