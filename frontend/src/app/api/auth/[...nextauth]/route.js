@@ -15,7 +15,7 @@ export const authOptions = {
       },
       async authorize(credentials) {
         try {
-          const res = await axios.post("http://localhost:5000/api/auth/login", {
+          const res = await axios.post("https://fuzzy-space-engine-g9r76wxg4rx3v6gx-5000.app.github.dev/api/auth/login", {
             email: credentials.email,
             password: credentials.password,
           });
