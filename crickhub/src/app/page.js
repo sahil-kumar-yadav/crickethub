@@ -1,18 +1,22 @@
 "use client"
-import AuthModal from "@/components/Authmodel";
-import { useState } from "react";
+import React, { useState } from 'react';
+import { useSession } from 'next-auth/react';
+import AuthPopup from '../components/AuthPopup';
 
 export default function Home() {
-  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+
+  const { data: session } = useSession();
+  const [showPopup, setShowPopup] = useState(false);
 
   return (
     <div>
-      <h1>Welcome to Crickethub</h1>
-      <button onClick={() => setIsAuthModalOpen(true)}>Login / Sign Up</button>
-      <AuthModal
-        isOpen={isAuthModalOpen}
-        onClose={() => setIsAuthModalOpen(false)}
-      />
+      <h1>Welcome to the App</h1>
+      {!session ? (
+        <button onClick={() => setShowPopup(true)}>Login / Sign Up</button>
+      ) : (
+        <p>Welcome, {session.user.name}</p>
+      )}
+      {showPopup && <AuthPopup onClose={() => setShowPopup(false)} />}
     </div>
   );
 }

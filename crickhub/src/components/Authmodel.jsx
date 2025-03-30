@@ -1,110 +1,69 @@
-"use client";
+import React, { useState } from 'react';
+import { signIn } from 'next-auth/react';
 
-import { useState } from "react";
-import { signIn } from "next-auth/react";
-import axios from "axios";
+const AuthPopup = ({ onClose }) => {
+  const [isLogin, setIsLogin] = useState(true);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
-export default function AuthModal({ isOpen, onClose }) {
-  const [isLogin, setIsLogin] = useState(true); // Toggle between login and signup
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [name, setName] = useState(""); // Only for signup
-  const [error, setError] = useState("");
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      if (isLogin) {
-        // Login logic
-        const result = await signIn("credentials", {
-          redirect: false,
-          email,
-          password,
-        });
-
-        if (result?.error) {
-          setError(result.error);
-        } else {
-          setError("");
-          alert("Login successful!");
-          onClose(); // Close the modal
-        }
+  const handleAuth = async () => {
+    if (isLogin) {
+      await signIn('credentials', { email, password, redirect: false });
+    } else {
+      const response = await fetch('/api/auth/signup', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+      if (response.ok) {
+        alert('Signup successful! Please log in.');
+        setIsLogin(true);
       } else {
-        // Signup logic
-        const res = await axios.post("https://fuzzy-space-engine-g9r76wxg4rx3v6gx-3000.app.github.dev/api/auth/register", {
-          name,
-          email,
-          password,
-        });
-
-        if (res.status === 201) {
-          alert("Registration successful! You can now log in.");
-          setIsLogin(true); // Switch to login form
-        }
+        alert('Signup failed.');
       }
-    } catch (err) {
-      setError(err.response?.data?.message || "Something went wrong");
     }
+    onClose();
   };
 
-  if (!isOpen) return null; // Don't render the modal if it's not open
-
   return (
-    <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center">
-      <div className="bg-white p-6 rounded-lg w-96 shadow-lg">
-        <button
-          onClick={onClose}
-          className="absolute top-2 right-2 text-lg font-bold cursor-pointer"
-        >
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+      <div className="bg-white p-6 rounded-lg shadow-lg w-80">
+        <button className="absolute top-2 right-2 text-gray-500" onClick={onClose}>
           ✖
         </button>
-        <h2 className="text-xl font-semibold mb-4">{isLogin ? "Login" : "Sign Up"}</h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {!isLogin && (
-            <input
-              type="text"
-              placeholder="Name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          )}
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <button
-            type="submit"
-            className="w-full py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            {isLogin ? "Login" : "Sign Up"}
-          </button>
-        </form>
-        {error && <p className="text-red-500 mt-2">{error}</p>}
-        <p className="mt-4 text-center">
-          {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
-          <button
+        <h2 className="text-xl font-bold mb-4">{isLogin ? 'Login' : 'Sign Up'}</h2>
+        <input
+          type="email"
+          placeholder="Email"
+          className="w-full p-2 border border-gray-300 rounded mb-4"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <input
+          type="password"
+          placeholder="Password"
+          className="w-full p-2 border border-gray-300 rounded mb-4"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+        />
+        <button
+          className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600"
+          onClick={handleAuth}
+        >
+          {isLogin ? 'Login' : 'Sign Up'}
+        </button>
+        <p className="mt-4 text-sm text-center">
+          {isLogin ? 'New here?' : 'Already have an account?'}{' '}
+          <span
+            className="text-blue-500 cursor-pointer"
             onClick={() => setIsLogin(!isLogin)}
-            className="text-blue-500 hover:underline"
           >
-            {isLogin ? "Sign Up" : "Login"}
-          </button>
+            {isLogin ? 'Sign Up' : 'Login'}
+          </span>
         </p>
       </div>
     </div>
   );
-  
-}
+};
+
+export default AuthPopup;
