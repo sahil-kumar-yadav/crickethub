@@ -21,7 +21,11 @@ export const authOptions = {
           });
 
           if (res.data) {
-            return res.data; // Return user data
+            return {
+              id: res.data._id,
+              email: res.data.email,
+              role: res.data.role || "user", // Ensure role exists
+            };
           }
           return null;
         } catch (error) {
@@ -36,14 +40,16 @@ export const authOptions = {
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        token.id = user._id;
-        token.role = user.role; // Include role in token
+        token.id = user.id; // Ensure correct field
+        token.role = user.role;
       }
       return token;
     },
     async session({ session, token }) {
-      session.user.id = token.id;
-      session.user.role = token.role; // Include role in session
+      if (session.user) {
+        session.user.id = token.id ?? session.user.id;
+        session.user.role = token.role ?? "user";
+      }
       return session;
     },
   },
@@ -52,4 +58,4 @@ export const authOptions = {
 
 const handler = NextAuth(authOptions);
 
-export { handler as GET, handler as POST };
+export { handler as GET, handler as POST }; // ✅ For Next.js App Router
