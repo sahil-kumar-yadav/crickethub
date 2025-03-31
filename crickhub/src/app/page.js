@@ -1,7 +1,8 @@
 "use client"
 import React, { useState } from 'react';
 import { useSession } from 'next-auth/react';
-import AuthPopup from '../components/AuthPopup';
+import AuthPopup from '@/components/Authmodel';
+
 
 export default function Home() {
 

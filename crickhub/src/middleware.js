@@ -1,4 +1,7 @@
-export { default } from "next-auth/middleware";
+import { authMiddleware } from "@auth/core/nextjs";
+
+export default authMiddleware();
+
 export const config = {
-  matcher: ["/((?!api/auth).*)"], // Exclude auth routes
+  matcher: ["/dashboard", "/profile"], // Add your protected routes here
 };

@@ -1,9 +1,9 @@
 import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
-import { connectToDatabase } from '../../../lib/mongodb';
 import bcrypt from 'bcrypt';
+import { connectToDatabase } from '@/utils/mongodb';
 
-export default NextAuth({
+const authOptions = {
   providers: [
     CredentialsProvider({
       name: 'Credentials',
@@ -29,4 +29,7 @@ export default NextAuth({
     strategy: 'jwt',
   },
   secret: process.env.NEXTAUTH_SECRET,
-});
+};
+
+// ** Fix: Export HTTP handlers **
+export const { GET, POST } = NextAuth(authOptions);
